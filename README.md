@@ -46,3 +46,7 @@ Run:
 ```sh
 ./setup.sh
 ```
+
+Setup creates a local `.env` from `.env.example` if one does not already exist.
+Fill `.env` with real API keys or other secrets before running code that needs
+them. See `docs/secrets.md` for the full secrets workflow.

@@ -2,10 +2,20 @@
 .env
 .env.*
 !.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
 
 # Dependency directories
 node_modules/
 vendor/
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Build and cache output
 dist/
