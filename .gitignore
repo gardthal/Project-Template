@@ -1,0 +1,21 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Dependency directories
+node_modules/
+vendor/
+
+# Build and cache output
+dist/
+build/
+.cache/
+.tmp/
+tmp/
+
+# Logs
+*.log
+
+# Local worktree container, if you choose to keep it inside this folder.
+.worktrees/
