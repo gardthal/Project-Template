@@ -2,12 +2,26 @@
 
 Workspace for project code.
 
+## Directory Layout
+
+All projects should live under:
+
+```text
+~/Documents/Codex/
+```
+
+This project lives at:
+
+```text
+~/Documents/Codex/Test Project/
+```
+
 ## Git Worktree Workflow
 
-Keep this directory as the primary checkout, then create task branches in sibling worktrees:
+Keep this directory as the primary checkout on `main`, then create task branches in `worktrees/`:
 
 ```sh
-git worktree add ../test-project-worktrees/<branch-name> -b <branch-name>
+git worktree add worktrees/<branch-name> -b <branch-name>
 ```
 
 List worktrees:
@@ -19,8 +33,16 @@ git worktree list
 Remove a worktree after the branch is merged or no longer needed:
 
 ```sh
-git worktree remove ../test-project-worktrees/<branch-name>
+git worktree remove worktrees/<branch-name>
 git branch -d <branch-name>
 ```
 
 Use branch names like `codex/my-task` for Codex work and `feature/my-task` for longer-lived feature work.
+
+## Setup
+
+Run:
+
+```sh
+./setup.sh
+```

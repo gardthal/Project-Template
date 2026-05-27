@@ -17,5 +17,6 @@ tmp/
 # Logs
 *.log
 
-# Local worktree container, if you choose to keep it inside this folder.
+# Local worktree containers.
 .worktrees/
+worktrees/
