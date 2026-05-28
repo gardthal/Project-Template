@@ -33,10 +33,12 @@ Expected layout as the project grows:
 |-- AGENTS.md
 |-- README.md
 |-- setup.sh
+|-- .github/workflows/ci.yml
 |-- pyproject.toml       # Python project metadata, once dependencies exist
 |-- src/                 # Application or library code
 |-- tests/               # Automated tests
 |-- scripts/             # Developer or maintenance scripts
+|   `-- run_with_env.sh  # Load local .env before running commands
 |-- docs/                # Project documentation
 `-- worktrees/           # Local Git worktrees, not project source
 ```
@@ -80,18 +82,23 @@ git branch -d <branch-name>
 - Run `./setup.sh` after cloning, moving, copying, or creating a new worktree.
 - Keep `setup.sh` idempotent so it is safe to run multiple times.
 - Add project-specific setup to `setup.sh` as the project grows.
-- Prefer a local virtual environment named `.venv/`.
+- Use a local virtual environment named `.venv/`.
 - Do not install dependencies globally when a project-local environment is
   reasonable.
+- Store Python dependencies in project metadata such as `pyproject.toml`, or in
+  `requirements-dev.txt` / `requirements.txt` for simpler projects.
+- `setup.sh` should create `.venv/` and install dependencies from the project
+  metadata when present.
+- Update `.python-version`, `pyproject.toml`, README, package directory names,
+  and tests when copying this template into a real project.
 
 Typical Python setup commands may be added once the project has dependency
 metadata:
 
 ```sh
-python -m venv .venv
+./setup.sh
 . .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+python -m pytest
 ```
 
 ## Python Conventions
@@ -128,14 +135,18 @@ python -m pip install -e ".[dev]"
 
 - Never commit real API keys, tokens, passwords, private keys, or credential
   files.
-- Keep real local secrets in `.env`, `.env.*`, or `secrets/`; these paths are
-  ignored by Git.
+- Keep real local secrets in the project-local `.env`, `.env.*`, or `secrets/`;
+  these paths are ignored by Git.
 - Keep `.env.example` committed with variable names and safe placeholder values
   only.
+- Prefer unique keys per project when the external service supports multiple
+  keys.
 - Add new required environment variables to `.env.example` and document their
   purpose in `docs/secrets.md` or `README.md`.
 - Read secrets from environment variables in Python, typically with
   `os.environ["VARIABLE_NAME"]` for required values.
+- Run API-backed commands through `./scripts/run_with_env.sh` so local `.env`
+  values and `.venv/bin` tools are available without committing secrets.
 - Do not print secrets in logs, test output, error messages, screenshots, or PR
   descriptions.
 - Rotate any secret that may have been committed, exposed in logs, or pasted
@@ -171,9 +182,8 @@ python -m mypy src
 Typical test commands once the project has tests:
 
 ```sh
-python -m pytest
-python -m pytest tests/path/to/test_file.py
-python -m pytest --cov=src
+./scripts/run_with_env.sh python -m pytest
+./scripts/run_with_env.sh python -m pytest tests/path/to/test_file.py
 ```
 
 ## Documentation

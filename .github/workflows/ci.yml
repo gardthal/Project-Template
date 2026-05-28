@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Run setup
+        run: ./setup.sh
+
+      - name: Lint
+        run: ./scripts/run_with_env.sh python -m ruff check .
+
+      - name: Check formatting
+        run: ./scripts/run_with_env.sh python -m ruff format --check .
+
+      - name: Test
+        run: ./scripts/run_with_env.sh python -m pytest

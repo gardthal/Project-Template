@@ -1,12 +1,17 @@
 # Secrets Management
 
-Use environment variables for API keys, tokens, passwords, and other sensitive
-configuration. Commit only placeholder names and safe defaults.
+Use a project-local `.env` file for API keys, tokens, passwords, and other
+sensitive configuration. Commit only placeholder names and safe defaults.
+
+Each project should get its own unique set of keys when the service supports
+creating separate keys. This keeps projects isolated and makes it safer to
+rotate one project's credentials without breaking unrelated work.
 
 ## Files
 
 - `.env.example` is committed and documents required variables.
-- `.env` is local, ignored by Git, and stores real secret values.
+- `.env` is local to this project, ignored by Git, and stores real secret
+  values.
 - `.env.*` files are ignored by Git, except `.env.example`.
 - `secrets/` is ignored by Git for local credential files that cannot be stored
   as environment variables.
@@ -47,7 +52,17 @@ cp .env.example .env
 
 ## Use Secrets In A Shell
 
-Load the `.env` file for a command:
+Use the helper script for commands that need project secrets:
+
+```sh
+./scripts/run_with_env.sh python -m your_package
+./scripts/run_with_env.sh python -m pytest
+```
+
+The helper loads this project's `.env`, changes to the project root, and runs
+the command without printing secret values.
+
+You can also load the `.env` file manually:
 
 ```sh
 set -a
@@ -81,9 +96,20 @@ import os
 app_env = os.getenv("APP_ENV", "development")
 ```
 
-Python does not load `.env` files automatically. Either load `.env` in the shell
-before running Python, or add a small development-only loader later if the
-project needs one.
+Python does not load `.env` files automatically. Use
+`./scripts/run_with_env.sh`, load `.env` in the shell before running Python, or
+add a development-only loader later if the project needs one.
+
+## Codex Usage
+
+Codex can run API-backed code when the needed keys are in the local `.env` file
+and the command is run through the helper:
+
+```sh
+./scripts/run_with_env.sh python -m your_package
+```
+
+Do not ask Codex to print `.env`, echo secret values, or paste keys into code.
 
 ## Rotation And Exposure
 
@@ -91,4 +117,4 @@ project needs one.
   shared with the wrong audience.
 - After rotating, remove the exposed value from code and history if needed.
 - Prefer service-specific restricted keys over broad account-level keys.
-- Use separate keys for development, CI, staging, and production.
+- Prefer separate keys for each project and environment.
